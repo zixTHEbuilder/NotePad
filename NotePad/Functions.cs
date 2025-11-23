@@ -43,9 +43,10 @@ namespace NotesApp
                 string ReadNote = input.ReadString("Do you want to view contents inside the notes? if yes enter file name as is, else press Enter");
                 if (ReadNote != null)
                 {
-                    if (File.Exists(ReadNote))
+                    string txtReadNote = Input.TxtExtension(ReadNote);
+                    if (File.Exists(txtReadNote))
                     {
-                        File.OpenText(ReadNote);
+                        File.OpenText(txtReadNote);
                     }
                     else { Console.WriteLine("File Not Found, Please Make Sure You Enter The File Name As Is"); }
                 }
