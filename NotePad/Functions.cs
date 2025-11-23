@@ -22,7 +22,7 @@ namespace NotesApp
             {
                 Directory.CreateDirectory(DirectoryPath);
             }
-            if (!File.Exists(TxtFileName))
+            if (!File.Exists(FilePath))
             {
                 File.WriteAllText(FilePath, Note);
                 Console.WriteLine("Note Saved Successfully");
@@ -64,14 +64,14 @@ namespace NotesApp
             string FullPath = Path.Combine(DirectoryPath, EditRequest);
             if (!string.IsNullOrEmpty(EditRequest))
             {
-                if (File.Exists(EditRequest))
+                if (File.Exists(FullPath))
                 {
-                    File.OpenRead(EditRequest);
+                    File.OpenRead(FullPath);
                     int AppendOrOverwrite = input.ReadInt("1. Append (Add text to existing note) \n2. Overwrite (Replace the old content entirely with the new note)");
                     if (AppendOrOverwrite == 1)
                     {
                         string AppendText = input.ReadString("Enter the text u want to add to the existing note");
-                        File.AppendAllText(EditRequest, AppendText);
+                        File.AppendAllText(FullPath, AppendText);
                         Console.WriteLine("Note Updated Successfully");
                     }
                     else if (AppendOrOverwrite == 2)
@@ -89,25 +89,36 @@ namespace NotesApp
         }
         public void DeleteNotes()
         {
-            string DirectoryPath = @"C:\Users\xylea\Documents\NotesApp";
-            if (Directory.Exists(DirectoryPath))
-            {
-                string[] Files = Directory.GetFiles(DirectoryPath);
+            string DirectoryPath= @"C:\Users\xylea\Documents\NotesApp";
 
-                foreach (string file in Files)
-                {
-                    Console.WriteLine(Path.GetFileName(file));
-                }
-                string DeletionConfirmation = input.ReadString("Are you sure you want to delete the above notes? (y/n)");
-                DeletionConfirmation = DeletionConfirmation.ToLower().Trim();
-                if (DeletionConfirmation == "y")
-                {
-                    foreach (string file in Files)
-                    {
-                        File.Delete(file);
-                    }
-                }
+            if (!Directory.Exists(DirectoryPath))
+            {
+                Console.WriteLine("No notes to delete.");
+                return;
             }
+
+            string[] Files = Directory.GetFiles(DirectoryPath);
+            if (Files.Length == 0)
+            {
+                Console.WriteLine("No notes to delete.");
+                return;
+            }
+
+            Console.WriteLine("Files:");
+            foreach (var file in Files)
+                Console.WriteLine(Path.GetFileName(file));
+
+            string confirm = input.ReadString("Delete ALL notes? (y/n) : ").ToLower().Trim();
+            if (confirm != "y")
+            {
+                Console.WriteLine("Cancelled.");
+                return;
+            }
+
+            foreach (string file in Files)
+                File.Delete(file);
+
+            Console.WriteLine("All notes deleted.");
         }
     }
 }
