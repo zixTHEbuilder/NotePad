@@ -41,12 +41,13 @@ namespace NotesApp
                     Console.WriteLine(FileName);
                 }
                 string ReadNote = input.ReadString("Do you want to view contents inside the notes? if yes enter file name as is, else press Enter");
-                if (ReadNote != null)
+                if (!string.IsNullOrEmpty(ReadNote))
                 {
                     string txtReadNote = Input.TxtExtension(ReadNote);
-                    if (File.Exists(txtReadNote))
+                    string FullPath = Path.Combine(DirectoryPath, txtReadNote);     // make sure to use Path.Combine so the entire directory path is made, the error is previously made was just enter "txtReadNote" which cannot find the file.
+                    if (File.Exists(FullPath))
                     {
-                        File.OpenText(txtReadNote);
+                        Console.WriteLine(File.ReadAllText(txtReadNote));
                     }
                     else { Console.WriteLine("File Not Found, Please Make Sure You Enter The File Name As Is"); }
                 }
@@ -60,7 +61,7 @@ namespace NotesApp
         {
             string EditRequest = input.ReadString("Enter the note name to edit", LowerTrim: true);
 
-            if (string.IsNullOrEmpty(EditRequest))
+            if (!string.IsNullOrEmpty(EditRequest))
             {
                 if (File.Exists(EditRequest))
                 {
@@ -98,10 +99,10 @@ namespace NotesApp
                     Console.WriteLine(FileName);
                 }
                 string DeletionConfirmation = input.ReadString("Are you sure you want to delete the above notes? (y/n)");
-                DeletionConfirmation.ToLower().Trim();
+                DeletionConfirmation = DeletionConfirmation.ToLower().Trim();
                 if (DeletionConfirmation == "y")
                 {
-                    File.Delete(DirectoryPath);
+                    Directory.Delete(DirectoryPath, true );
                 }
                 else
                 {
