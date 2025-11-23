@@ -22,7 +22,7 @@ namespace NotesApp
             {
                 Directory.CreateDirectory(DirectoryPath);
             }
-            if (!File.Exists(FileName))
+            if (!File.Exists(TxtFileName))
             {
                 File.WriteAllText(FilePath, Note);
                 Console.WriteLine("Note Saved Successfully");
@@ -40,14 +40,14 @@ namespace NotesApp
                     string FileName = Path.GetFileName(file);
                     Console.WriteLine(FileName);
                 }
-                string ReadNote = input.ReadString("Do you want to view contents inside the notes? if yes enter file name as is, else press Enter");
+                string ReadNote = input.ReadString("Do you want to view contents inside the notes? if yes enter file name as is, else press Enter : ");
                 if (!string.IsNullOrEmpty(ReadNote))
                 {
                     string txtReadNote = Input.TxtExtension(ReadNote);
                     string FullPath = Path.Combine(DirectoryPath, txtReadNote);     // make sure to use Path.Combine so the entire directory path is made, the error is previously made was just enter "txtReadNote" which cannot find the file.
                     if (File.Exists(FullPath))
                     {
-                        Console.WriteLine(File.ReadAllText(txtReadNote));
+                        Console.WriteLine(File.ReadAllText(FullPath));
                     }
                     else { Console.WriteLine("File Not Found, Please Make Sure You Enter The File Name As Is"); }
                 }
@@ -59,8 +59,9 @@ namespace NotesApp
         }
         public void EditNotes()
         {
+            string DirectoryPath = @"C:\Users\xylea\Documents\NotesApp";
             string EditRequest = input.ReadString("Enter the note name to edit", LowerTrim: true);
-
+            string FullPath = Path.Combine(DirectoryPath, EditRequest);
             if (!string.IsNullOrEmpty(EditRequest))
             {
                 if (File.Exists(EditRequest))
@@ -76,14 +77,14 @@ namespace NotesApp
                     else if (AppendOrOverwrite == 2)
                     {
                         string OverwriteText = input.ReadString("Enter the FULL, EDITED text for the note. This will replace the old content entirely." + "\nPress Enter when finished:", writeLine: true);
-                        File.WriteAllText(EditRequest, OverwriteText);
+                        File.WriteAllText(FullPath, OverwriteText);
                         Console.WriteLine("Note Replaced Successfully");
                     }
                 }
             }
             else
             {
-                Console.WriteLine("File Doesn't Exist");
+                Console.WriteLine("Note name cannot be empty");
             }
         }
         public void DeleteNotes()
@@ -95,18 +96,16 @@ namespace NotesApp
 
                 foreach (string file in Files)
                 {
-                    string FileName = Path.GetFileName(file);
-                    Console.WriteLine(FileName);
+                    Console.WriteLine(Path.GetFileName(file));
                 }
                 string DeletionConfirmation = input.ReadString("Are you sure you want to delete the above notes? (y/n)");
                 DeletionConfirmation = DeletionConfirmation.ToLower().Trim();
                 if (DeletionConfirmation == "y")
                 {
-                    Directory.Delete(DirectoryPath, true );
-                }
-                else
-                {
-                    Console.WriteLine("Nothing to delete!");
+                    foreach (string file in Files)
+                    {
+                        File.Delete(file);
+                    }
                 }
             }
         }

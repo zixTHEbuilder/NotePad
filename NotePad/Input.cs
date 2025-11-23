@@ -15,10 +15,9 @@ namespace NotesApp
                 else
                     Console.Write($"{message} : ");
                 string UserInput = Console.ReadLine();
-
-                if (UserInput != null)
+                bool sucesss = int.TryParse(UserInput, out int value);
+                if (sucesss)
                 {
-                    int.TryParse(UserInput, out int value);
                     return value;
                 }
                 else
