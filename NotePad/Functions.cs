@@ -1,6 +1,7 @@
 ﻿using System;
 
 using System.Collections.Generic;
+using System.IO;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,13 +11,13 @@ namespace NotesApp
     class Functions
     {
         Input input = new Input();
+        string DirectoryPath = @"C:\Users\xylea\Documents\NotesApp";
         public void CreateNote()
         {
             string Note = input.ReadString("Enter text to save in notes app : ");
             string FileName = input.ReadString("Enter file name to save : ");
             string TxtFileName = Input.TxtExtension(FileName);      // use class name to call the TxtExtension since its static
 
-            string DirectoryPath = @"C:\Users\xylea\Documents\NotesApp";
             string FilePath = $"C:\\Users\\xylea\\Documents\\NotesApp\\{TxtFileName}";
             if (!Directory.Exists(DirectoryPath))
             {
@@ -30,18 +31,16 @@ namespace NotesApp
         }
         public void ViewNotes()
         {
-            string DirectoryPath = @"C:\Users\xylea\Documents\NotesApp";
             if (Directory.Exists(DirectoryPath))
             {
                 string[] Files = Directory.GetFiles(DirectoryPath);
 
                 foreach (string file in Files)
                 {
-                    string FileName = Path.GetFileName(file);
-                    Console.WriteLine(FileName);
+                    Console.WriteLine(Path.GetFileName(file));
                 }
                 string ReadNote = input.ReadString("Do you want to view contents inside the notes? if yes enter file name as is, else press Enter : ");
-                if (!string.IsNullOrEmpty(ReadNote))
+                if (string.IsNullOrEmpty(ReadNote))
                 {
                     string txtReadNote = Input.TxtExtension(ReadNote);
                     string FullPath = Path.Combine(DirectoryPath, txtReadNote);     // make sure to use Path.Combine so the entire directory path is made, the error is previously made was just enter "txtReadNote" which cannot find the file.
@@ -59,7 +58,6 @@ namespace NotesApp
         }
         public void EditNotes()
         {
-            string DirectoryPath = @"C:\Users\xylea\Documents\NotesApp";
             string EditRequest = input.ReadString("Enter the note name to edit", LowerTrim: true);
             string FullPath = Path.Combine(DirectoryPath, EditRequest);
             if (!string.IsNullOrEmpty(EditRequest))
@@ -74,7 +72,7 @@ namespace NotesApp
                         File.AppendAllText(FullPath, AppendText);
                         Console.WriteLine("Note Updated Successfully");
                     }
-                    else if (AppendOrOverwrite == 2)
+                    if (AppendOrOverwrite == 2)
                     {
                         string OverwriteText = input.ReadString("Enter the FULL, EDITED text for the note. This will replace the old content entirely." + "\nPress Enter when finished:", writeLine: true);
                         File.WriteAllText(FullPath, OverwriteText);
@@ -89,7 +87,6 @@ namespace NotesApp
         }
         public void DeleteNotes()
         {
-            string DirectoryPath= @"C:\Users\xylea\Documents\NotesApp";
 
             if (!Directory.Exists(DirectoryPath))
             {
@@ -122,3 +119,6 @@ namespace NotesApp
         }
     }
 }
+
+
+
